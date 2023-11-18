@@ -1,11 +1,15 @@
-import React from "react";
-import { View, Text, StyleSheet, Image, FlatList } from "react-native";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, Image, FlatList, Button } from "react-native";
 import Swiper from "react-native-swiper";
+import example from "../assets/images/example.jpg";
+import Hyperlink from "react-native-hyperlink";
+import openURL from "../util/openUrl";
+import { DetailModal } from "../components/DetailModal";
 
 const images = [
-  { uri: "https://example.com/image1.jpg", description: "Description 1" },
-  { uri: "https://example.com/image2.jpg", description: "Description 2" },
-  { uri: "https://example.com/image3.jpg", description: "Description 3" },
+  { data: example, description: "Description 1" },
+  { data: example, description: "Description 2" },
+  { data: example, description: "Description 3" },
 ];
 
 const data = [
@@ -14,13 +18,15 @@ const data = [
     text: "Item 1",
     skills: ["React", "TypeScript", "Git"],
     description: "Description 1",
+    workPeriod: "23.11.08 ~ 23.11.15 (2주)",
+    link: "http://www.example.com",
   },
 ];
 
 const ListItem = ({ item }) => (
   <View style={styles.listItem}>
     <View style={styles.itemRowContainer}>
-      <Text style={styles.detailText}>스킬:</Text>
+      <Text style={styles.detailText}>-스킬:</Text>
 
       {item.skills.map((item, index) => (
         <View key={index}>
@@ -31,17 +37,28 @@ const ListItem = ({ item }) => (
       ))}
     </View>
     <View style={styles.itemRowContainer}>
-      <Text style={styles.detailText}>설명:</Text>
+      <Text style={styles.detailText}>-설명:</Text>
       <Text style={styles.detailText}>{item.description}</Text>
     </View>
     <View style={styles.itemRowContainer}>
-      <Text style={styles.detailText}>설명:</Text>
-      <Text style={styles.detailText}>{item.description}</Text>
+      <Text style={styles.detailText}>-작업기간:</Text>
+      <Text style={styles.detailText}>{item.workPeriod}</Text>
     </View>
+    <View style={styles.itemRowContainer}>
+      <Text style={styles.detailText}>-링크:</Text>
+      {/* <Hyperlink
+        linkStyle={styles.hyperlinkStyle}
+        onPress={(url) => openURL(url)}
+      > */}
+      <Text style={styles.contentStyle}>{item.link}</Text>
+      {/* </Hyperlink> */}
+    </View>
+    <DetailModal />
   </View>
 );
 
 const DetailScreen = ({ navigation, route }) => {
+  const [modalVisible, setModalVisible] = useState(false);
   const name = route.params.name;
   return (
     <View style={styles.container}>
@@ -53,10 +70,16 @@ const DetailScreen = ({ navigation, route }) => {
           keyExtractor={(item) => item.id}
         />
       </View>
-      <Swiper style={styles.wrapper} showsButtons={true}>
+      <Swiper
+        style={styles.wrapper}
+        showsButtons={true}
+        paginationStyle={styles.pagination}
+      >
         {images.map((image, index) => (
           <View key={index} style={styles.slide}>
-            <Image style={styles.image} source={{ uri: image.uri }} />
+            <View style={styles.imageContainer}>
+              <Image style={styles.image} source={image.data} />
+            </View>
             <Text>{image.description}</Text>
           </View>
         ))}
@@ -100,9 +123,26 @@ const styles = StyleSheet.create({
   },
   itemRowContainer: {
     flexDirection: "row",
+    marginVertical: 3,
   },
   detailText: {
     fontSize: 20,
+  },
+  hyperlinkStyle: {
+    fontSize: 16,
+    color: "#505050",
+  },
+  contentStyle: {
+    fontSize: 18,
+    color: "#111111",
+  },
+  imageContainer: {
+    borderColor: "black",
+    borderWidth: 2,
+    marginVertical: 3,
+  },
+  pagination: {
+    bottom: 10,
   },
 });
 
